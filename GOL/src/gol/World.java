@@ -190,6 +190,15 @@ public class World {
 			world[x][y].setCalcState('*');
 		}
 
+		// Rule #5 by Rasmus
+		// intet liv - 10 % change for at liv opstår
+		if (neighboursAlive == 0) {
+			if (Util.randInt(0, 100000) == 10) {
+				world[Util.randInt(10, maxX-10)][Util.randInt(10, maxY-10)].setCalcState('*');
+			}
+
+		}
+
 	}
 
 	public void click() {
