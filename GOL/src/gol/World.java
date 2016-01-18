@@ -21,16 +21,35 @@ public class World {
 		for (int x = 0; x < maxX; x++)
 			for (int y = 0; y < maxY; y++) {
 				if (Util.randInt(0, 1) == 0)
-					world[x][y].setInitalState(' ');
+					world[x][y].setInitalState(false);
 				else
-					world[x][y].setInitalState('*');
+					world[x][y].setInitalState(true);
+
+				if (Util.randInt(0, 1) == 1) {
+					world[x][y].setTeam('A');
+				} else
+					world[x][y].setTeam('B');
 
 			}
 
 	}
 
-	public char getCellState(int x, int y) {
+	public void clearWorld() {
+		for (int x = 0; x < maxX; x++)
+			for (int y = 0; y < maxY; y++) {
+				world[x][y].setInitalState(false);
+				world[x][y].setTeam('A');
+			}
+
+	}
+
+	public boolean getCellState(int x, int y) {
 		return world[x][y].getNewState();
+	}
+
+	public void setCellState(int x, int y, boolean newState) {
+		world[x][y].setInitalState(newState);
+		world[x][y].setTeam('A');
 
 	}
 
@@ -40,9 +59,9 @@ public class World {
 
 	public String getCellStateStr(int x, int y) {
 		String retVal = "";
-		if (world[x][y].getNewState() == ' ')
+		if (world[x][y].isNewStateAlive() == false)
 			retVal = " ";
-		if (world[x][y].getNewState() == '*')
+		if (world[x][y].isNewStateAlive())
 			retVal = "*";
 
 		return retVal;
@@ -51,8 +70,11 @@ public class World {
 
 	public Color getCellColor(int x, int y) {
 		Color retVal;
-		if (world[x][y].getNewState() == ' ')
-			retVal = Color.green;
+		if (world[x][y].isNewStateAlive())
+			if (getCellObj(x, y).getTeam() == 'A')
+				retVal = Color.green;
+			else
+				retVal = Color.red;
 		else
 			retVal = Color.blue;
 		return retVal;
@@ -115,45 +137,45 @@ public class World {
 		try {
 			n[7] = world[x - 1][y - 1];
 		} catch (Exception e) {
-			n[7].setOldState(' ');
+			n[7].setOldStateDead();
 		}
 		try {
 			n[8] = world[x - 1][y];
 		} catch (Exception e) {
-			n[8].setOldState(' ');
+			n[8].setOldStateDead();
 		}
 		try {
 			n[9] = world[x - 1][y + 1];
 		} catch (Exception e) {
-			n[9].setOldState(' ');
+			n[9].setOldStateDead();
 		}
 
 		try {
 			n[4] = world[x][y - 1];
 		} catch (Exception e) {
-			n[4].setOldState(' ');
+			n[4].setOldStateDead();
 		}
 		try {
 			n[6] = world[x][y + 1];
 		} catch (Exception e) {
-			n[6].setOldState(' ');
+			n[6].setOldStateDead();
 		}
 
 		// bund 3 = x + 1
 		try {
 			n[1] = world[x + 1][y - 1];
 		} catch (Exception e) {
-			n[1].setOldState(' ');
+			n[1].setOldStateDead();
 		}
 		try {
 			n[2] = world[x + 1][y];
 		} catch (Exception e) {
-			n[2].setOldState(' ');
+			n[2].setOldStateDead();
 		}
 		try {
 			n[3] = world[x + 1][y + 1];
 		} catch (Exception e) {
-			n[3].setOldState(' ');
+			n[3].setOldStateDead();
 		}
 
 		return n;
@@ -164,7 +186,18 @@ public class World {
 		// get old state data from neighbours
 		int retVal = 0;
 		for (int i = 0; i < n.length; i++) {
-			if (n[i].getOldState() == '*') {
+			if (n[i].isOldStateAlive()) {
+				retVal += 1;
+			}
+		}
+		return retVal;
+	}
+
+	public static int getNeighboursAliveTeam(Cell[] n, char team) {
+		// get old state data from neighbours
+		int retVal = 0;
+		for (int i = 0; i < n.length; i++) {
+			if (n[i].isOldStateAlive() && n[i].getTeam() == team) {
 				retVal += 1;
 			}
 		}
@@ -172,43 +205,75 @@ public class World {
 	}
 
 	public static void calcNewState(int x, int y) {
-		int neighboursAlive = getNeighboursAlive(get8NeighboursOldState(x, y));
-		if (world[x][y].getOldState() == '*') {
+		// int neighboursAlive = getNeighboursAlive(get8NeighboursOldState(x,
+		// y));
+		int neighboursAliveA = getNeighboursAliveTeam(get8NeighboursOldState(x, y), 'A');
+		int neighboursAliveB = getNeighboursAliveTeam(get8NeighboursOldState(x, y), 'B');
+		int neighboursAlive = 0;
+		if (neighboursAliveA > neighboursAliveB) {
+			neighboursAlive = neighboursAliveA;
+			world[x][y].setTeam('A');
+
+		} else if (neighboursAliveA < neighboursAliveB) {
+			neighboursAlive = neighboursAliveB;
+			world[x][y].setTeam('B');
+
+		} else {
+/*
+			if (Util.randInt(0, 1) == 1) {
+				neighboursAlive = neighboursAliveA;
+				world[x][y].setTeam('A');
+			} else {
+				neighboursAlive = neighboursAliveB;
+				world[x][y].setTeam('B');
+
+			} */
+
+		}
+		if (world[x][y].isOldStateAlive()) {
 			// Rule #1
-			if (neighboursAlive < 2)
-				world[x][y].setCalcState(' ');
+			if (neighboursAlive < 2) {
+				world[x][y].setCalcStateDead();
+			}
 			// Rule #2
-			if (neighboursAlive == 2 || neighboursAlive == 3)
-				world[x][y].setCalcState('*');
+			if (neighboursAlive == 2 || neighboursAlive == 3) {
+				world[x][y].setCalcStateAlive();
+			}
 
 			// Rule #3
-			if (neighboursAlive > 3)
-				world[x][y].setCalcState(' ');
+			if (neighboursAlive > 3) {
+				world[x][y].setCalcStateDead();
+			}
 		}
 		// Rule #4
-		if (world[x][y].getOldState() == ' ' && neighboursAlive == 3) {
-			world[x][y].setCalcState('*');
+		if (world[x][y].isOldStateAlive() == false && neighboursAlive == 3) {
+			world[x][y].setCalcStateAlive();
 		}
 
 		// Rule #5 by Rasmus
 		// intet liv - 10 % change for at liv opstår
-		if (neighboursAlive == 0) {
-			if (Util.randInt(0, 100000) == 10) {
-				world[Util.randInt(10, maxX-10)][Util.randInt(10, maxY-10)].setCalcState('*');
-			}
-
-		}
+		/*
+		 * int rx = Util.randInt(10, maxX - 10); int ry = Util.randInt(10, maxY
+		 * - 10); if (neighboursAlive == 0) { if (Util.randInt(0, 1000) == 10) {
+		 * world[rx][ry].setCalcState('*'); if(Util.randInt(0,1) == 1)
+		 * world[rx][ry].setTeam('A'); else world[rx][ry].setTeam('B');
+		 * 
+		 * 
+		 * }
+		 * 
+		 * }
+		 */
 
 	}
 
-	public void click() {
+	public void click() throws InterruptedException {
 		System.out.println("Click world calcState = NewState");
 		int x, y;
+		Thread.sleep(100);
 		for (x = 0; x < maxX; x++) {
 			for (y = 0; y < maxY; y++) {
 				world[x][y].setNewState(world[x][y].getCalcState());
 				world[x][y].setOldState(world[x][y].getNewState());
-
 			}
 
 		}

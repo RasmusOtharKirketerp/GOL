@@ -17,46 +17,98 @@ public class Cell {
 	 * if by reproduction.
 	 * 
 	 */
-	private char oldState;
-	private char calcState;
-	private char newState;
-	
-	private static final char alive = '*';
-	private static final char dead = ' ';
+	private boolean oldStateAlive;
+	private boolean calcStateAlive;
+	private boolean newStateAlive;
+
+	private char team;
+
+	// private static boolean alive;
 
 	public Cell() {
-		setNewState(dead);
-		setOldState(dead);
-		setCalcState(dead);
-	}
-	
-	public char getCalcState() {
-		return calcState;
+		setNewState(false);
+		setOldState(false);
+		setCalcState(false);
+		setTeam(' ');
 	}
 
-	public void setCalcState(char calcState) {
-		this.calcState = calcState;
+	// CALC STATE
+	public void setCalcStateDead() {
+		setCalcState(false);
 	}
 
-	public char getNewState() {
-		return newState;
+	public void setCalcStateAlive() {
+		setCalcState(true);
 	}
 
-	public void setNewState(char state) {
-		this.newState = state;
+	public boolean getCalcState() {
+		return calcStateAlive;
 	}
 
-	public void setInitalState(char state) {
-		setNewState(state);
-		setOldState(state);
+	public void setCalcState(boolean calcState) {
+		this.calcStateAlive = calcState;
 	}
 
-	public char getOldState() {
-		return oldState;
+	public boolean isCalcStateAlive() {
+		return calcStateAlive;
 	}
 
-	public void setOldState(char oldStateIsAlive) {
-		this.oldState = oldStateIsAlive;
+	// NEW STATE
+	public void setNewStateDead() {
+		setNewState(false);
+	}
+
+	public void setNewStateAlive() {
+		setNewState(true);
+	}
+
+	public boolean getNewState() {
+		return newStateAlive;
+	}
+
+	public void setNewState(boolean state) {
+		this.newStateAlive = state;
+	}
+
+	public boolean isNewStateAlive() {
+		return newStateAlive;
+	}
+
+	// OLD STATE
+
+	public void setOldStateDead() {
+		setOldState(false);
+	}
+
+	public void setOldStateAlive() {
+		setOldState(true);
+	}
+
+	public boolean getOldState() {
+		return oldStateAlive;
+	}
+
+	public void setOldState(boolean oldStateIsAlive) {
+		this.oldStateAlive = oldStateIsAlive;
+	}
+
+	public boolean isOldStateAlive() {
+			return oldStateAlive;
+	}
+
+	// INITIAL STATE
+	public void setInitalState(boolean c) {
+		setNewState(c);
+		setCalcState(c);
+		setOldState(c);
+	}
+
+	public char getTeam() {
+		return team;
+	}
+
+	public void setTeam(char team) {
+		this.team = team;
 	}
 
 }

@@ -34,6 +34,16 @@ public class Screen {
 		scalex = max.x / countX;
 		scaley = max.y / countY;
 	}
+	
+	public Point convertRealXY2gridXY(Point realP){
+		Point gridPoint = new Point();
+		
+		gridPoint.x = (realP.x / xWidth) - 1;
+		gridPoint.y = (realP.y / yWidth) - 1;
+		
+		return gridPoint;
+		
+	}
 
 	public Point getCellCenter(Point p) {
 		Point retVal = new Point();
