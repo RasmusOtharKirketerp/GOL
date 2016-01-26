@@ -13,7 +13,7 @@ public class Main extends JPanel {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		w.printWorldOldState();
 		w.calcWorld();
 		w.click();

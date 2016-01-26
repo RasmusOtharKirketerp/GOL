@@ -7,6 +7,9 @@ public class World {
 	static int maxY;
 	static Cell[][] world;
 
+	static int teamACount = 0;
+	static int teamBCount = 0;
+
 	public World(int x, int y) {
 		maxX = x;
 		maxY = y;
@@ -17,18 +20,36 @@ public class World {
 
 	}
 
+	public static void calcTeamAlive(int x, int y) {
+		boolean state = world[x][y].getOldState();
+		char team = world[x][y].getTeam();
+		if (state) {
+			if (team == 'A')
+				teamACount += 1;
+			if (team == 'B')
+				teamBCount += 1;
+		}
+
+	}
+
 	public void genRandomWorld() {
+		teamACount = 0;
+		teamBCount = 0;
+
 		for (int x = 0; x < maxX; x++)
 			for (int y = 0; y < maxY; y++) {
-				if (Util.randInt(0, 1) == 0)
-					world[x][y].setInitalState(false);
-				else
-					world[x][y].setInitalState(true);
 
 				if (Util.randInt(0, 1) == 1) {
-					world[x][y].setTeam('A');
-				} else
-					world[x][y].setTeam('B');
+					world[x][y].setInitalState(false);
+				} else {
+					world[x][y].setInitalState(true);
+
+					if (Util.randInt(0, 1) == 1) {
+						world[x][y].setTeam('A');
+					} else
+						world[x][y].setTeam('B');
+				}
+				calcTeamAlive(x, y);
 
 			}
 
@@ -38,7 +59,7 @@ public class World {
 		for (int x = 0; x < maxX; x++)
 			for (int y = 0; y < maxY; y++) {
 				world[x][y].setInitalState(false);
-				world[x][y].setTeam('A');
+				// world[x][y].setTeam('A');
 			}
 
 	}
@@ -49,7 +70,7 @@ public class World {
 
 	public void setCellState(int x, int y, boolean newState) {
 		world[x][y].setInitalState(newState);
-		world[x][y].setTeam('A');
+		// world[x][y].setTeam('A');
 
 	}
 
@@ -120,9 +141,13 @@ public class World {
 
 	public void calcWorld() {
 		int x, y;
+		teamACount = 0;
+		teamBCount = 0;
 		for (x = 0; x < maxX; x++)
-			for (y = 0; y < maxY; y++)
+			for (y = 0; y < maxY; y++) {
 				calcNewState(x, y);
+				calcTeamAlive(x, y);
+			}
 
 	}
 
@@ -219,15 +244,13 @@ public class World {
 			world[x][y].setTeam('B');
 
 		} else {
-/*
-			if (Util.randInt(0, 1) == 1) {
-				neighboursAlive = neighboursAliveA;
-				world[x][y].setTeam('A');
-			} else {
-				neighboursAlive = neighboursAliveB;
-				world[x][y].setTeam('B');
-
-			} */
+			/*
+			 * if (Util.randInt(0, 1) == 1) { neighboursAlive =
+			 * neighboursAliveA; world[x][y].setTeam('A'); } else {
+			 * neighboursAlive = neighboursAliveB; world[x][y].setTeam('B');
+			 * 
+			 * }
+			 */
 
 		}
 		if (world[x][y].isOldStateAlive()) {
@@ -252,24 +275,27 @@ public class World {
 
 		// Rule #5 by Rasmus
 		// intet liv - 10 % change for at liv opstår
-		/*
-		 * int rx = Util.randInt(10, maxX - 10); int ry = Util.randInt(10, maxY
-		 * - 10); if (neighboursAlive == 0) { if (Util.randInt(0, 1000) == 10) {
-		 * world[rx][ry].setCalcState('*'); if(Util.randInt(0,1) == 1)
-		 * world[rx][ry].setTeam('A'); else world[rx][ry].setTeam('B');
-		 * 
-		 * 
-		 * }
-		 * 
-		 * }
-		 */
+
+		int rx = Util.randInt(1, maxX - 1);
+		int ry = Util.randInt(1, maxY - 1);
+		if (neighboursAlive == 0) {
+			if (Util.randInt(0, 1000) == 10) {
+				world[rx][ry].setCalcState(true);
+				if (Util.randInt(0, 1) == 1)
+					world[rx][ry].setTeam('A');
+				else
+					world[rx][ry].setTeam('B');
+
+			}
+
+		}
 
 	}
 
-	public void click() throws InterruptedException {
-		System.out.println("Click world calcState = NewState");
+	public void click() {
+		// System.out.println("Click world calcState = NewState");
 		int x, y;
-		Thread.sleep(100);
+
 		for (x = 0; x < maxX; x++) {
 			for (y = 0; y < maxY; y++) {
 				world[x][y].setNewState(world[x][y].getCalcState());
