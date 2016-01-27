@@ -1,4 +1,4 @@
 # GOL
 GameOfLife
 
-Please look in EXECUTABLES for runnable .JAR file
+Please look in GOL/EXEC for runnable .JAR file
