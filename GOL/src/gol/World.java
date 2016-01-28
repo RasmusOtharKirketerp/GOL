@@ -1,8 +1,16 @@
 package gol;
 
 import java.awt.Color;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-public class World {
+public class World implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	static int maxX;
 	static int maxY;
 	static Cell[][] world;
@@ -10,7 +18,45 @@ public class World {
 	static int teamACount = 0;
 	static int teamBCount = 0;
 
-	public World(int x, int y) {
+	// how often can life respawn
+	static int respawn = 100000;
+
+	public World() {
+	};
+
+	public void saveWorldToDisk() {
+		try {
+			FileOutputStream fileOut = new FileOutputStream("world.ser");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(world);
+			out.close();
+			fileOut.close();
+			System.out.println("World saved!!!");
+		} catch (IOException i)// exception stuff
+		{
+			i.printStackTrace();
+		}
+	}
+
+	public void loadWorldFromDisk() {
+		try {
+
+			FileInputStream fin = new FileInputStream("world.ser");
+			ObjectInputStream ois = new ObjectInputStream(fin);
+			world = (Cell[][]) ois.readObject();
+			ois.close();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuffer(" cells : ").append(World.world).toString();
+	}
+
+	public void WorldInit(int x, int y) {
 		maxX = x;
 		maxY = y;
 		world = new Cell[maxX][maxY];
@@ -279,7 +325,7 @@ public class World {
 		int rx = Util.randInt(1, maxX - 1);
 		int ry = Util.randInt(1, maxY - 1);
 		if (neighboursAlive == 0) {
-			if (Util.randInt(0, 1000) == 10) {
+			if (Util.randInt(0, respawn) == respawn) {
 				world[rx][ry].setCalcState(true);
 				if (Util.randInt(0, 1) == 1)
 					world[rx][ry].setTeam('A');

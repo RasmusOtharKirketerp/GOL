@@ -9,20 +9,26 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class MainPaint extends JPanel {
 	private static final long serialVersionUID = 1L;
-	static World w = new World(53 * 1, 32 * 1);
-	static Screen sc = new Screen(World.maxX, World.maxY);
 	protected static boolean gamePause;
 
 	static Point mouseP = new Point();
 	static Point valMouse = new Point();
+	static World w = new World();
+	static Screen sc = new Screen();
+	static GetPropertyValues properties = new GetPropertyValues();
 
-	public MainPaint() {
+	MainPaint() throws IOException {
+		properties.getPropValues();
+		// w.WorldInit(53 * properties.getX(), 32 * properties.getY());
+		w.WorldInit(properties.getX(), properties.getY());
+		sc.ScreenInit(World.maxX, World.maxY, properties.getRatio());
 	}
 
 	static public KeyListener myKL = new KeyListener() {
@@ -34,6 +40,12 @@ public class MainPaint extends JPanel {
 			}
 			if (e.getKeyChar() == 'g') {
 				w.genRandomWorld();
+			}
+			if (e.getKeyChar() == 's') {
+				w.saveWorldToDisk();
+			}
+			if (e.getKeyChar() == 'l') {
+				w.loadWorldFromDisk();
 			}
 			if (e.getKeyChar() == 'p') {
 				if (gamePause)
@@ -102,6 +114,7 @@ public class MainPaint extends JPanel {
 			for (int y = 0; y < World.maxY; y++) {
 				g.setColor(w.getCellColor(x, y));
 				g.drawLine(x, y, x, y);
+				// g.drawOval(x, y, 1, 1);
 			}
 		valMouse = getMousePosition();
 		if (valMouse != null) {
@@ -112,7 +125,7 @@ public class MainPaint extends JPanel {
 	}
 
 	@SuppressWarnings("static-access")
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, IOException {
 
 		JFrame frame = new JFrame("Game of life");
 		MainPaint universe = new MainPaint();
@@ -135,7 +148,7 @@ public class MainPaint extends JPanel {
 				frame.setTitle("Pause | Green(" + w.teamACount + ") Red(" + w.teamBCount + ")");
 			else
 				frame.setTitle("Game of life | Green(" + w.teamACount + ") Red(" + w.teamBCount + ")");
-			Thread.sleep(10);
+			Thread.sleep(100);
 		}
 
 	}

@@ -1,6 +1,12 @@
 package gol;
 
-public class Cell {
+import java.io.Serializable;
+
+public class Cell implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/*
 	 * https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
 	 * 
@@ -30,6 +36,12 @@ public class Cell {
 		setOldState(false);
 		setCalcState(false);
 		setTeam(' ');
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuffer(" cell : ").append(oldStateAlive).append(calcStateAlive).append(newStateAlive)
+				.append(team).toString();
 	}
 
 	// CALC STATE
@@ -93,7 +105,7 @@ public class Cell {
 	}
 
 	public boolean isOldStateAlive() {
-			return oldStateAlive;
+		return oldStateAlive;
 	}
 
 	// INITIAL STATE

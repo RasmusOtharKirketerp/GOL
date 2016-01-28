@@ -13,36 +13,46 @@ public class Screen {
 	int yWidth = 0;
 
 	int radius = 0;
-	
-	int scalex = 0;
-	int scaley = 0;
 
-	public Screen(int cx, int cy) {
+	double scalex = 0;
+	double scaley = 0;
+
+	double ratio = 0.0;
+
+	public void ScreenInit(int cx, int cy, double ratio_input) {
 		countX = cx;
 		countY = cy;
 		max.x = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
 		max.y = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height;
-		//max.x = 600;
-		//max.y = 600;
+		ratio = max.x / max.y;
+		// max.x = 600;
+		// max.y = 600;
 		xWidth = max.x / countX;
 		yWidth = max.y / countY;
 		if (xWidth > 3)
-			radius = (int) ((xWidth/2) - 1);
+			radius = (int) ((xWidth / 2) - 1);
 		else
 			radius = 1;
-		
-		scalex = max.x / countX;
-		scaley = max.y / countY;
+
+		scalex = (max.x / countX);
+		scaley = (max.y / countY);
+
+		// test
+		scalex = max.x / (countX * ratio_input);
+		scaley = scalex * this.ratio;
 	}
-	
-	public Point convertRealXY2gridXY(Point realP){
+
+	public Point convertRealXY2gridXY(Point realP) {
 		Point gridPoint = new Point();
-		
+
 		gridPoint.x = (realP.x / xWidth) - 1;
 		gridPoint.y = (realP.y / yWidth) - 1;
-		
+
+		gridPoint.x = (int) ((realP.x / scalex));
+		gridPoint.y = (int) ((realP.y / scaley));
+
 		return gridPoint;
-		
+
 	}
 
 	public Point getCellCenter(Point p) {
