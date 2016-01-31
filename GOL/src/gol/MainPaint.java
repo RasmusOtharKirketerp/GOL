@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.PointerInfo;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -98,6 +99,13 @@ public class MainPaint extends JPanel {
 			else
 				w.setCellState(mouseP.x, mouseP.y, false);
 
+			if ((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0) {
+				w.getCellObj(mouseP.x, mouseP.y).setTeam('A');
+
+			}
+			if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
+				w.getCellObj(mouseP.x, mouseP.y).setTeam('B');
+			}
 		}
 
 	};
@@ -148,7 +156,7 @@ public class MainPaint extends JPanel {
 				frame.setTitle("Pause | Green(" + w.teamACount + ") Red(" + w.teamBCount + ")");
 			else
 				frame.setTitle("Game of life | Green(" + w.teamACount + ") Red(" + w.teamBCount + ")");
-			Thread.sleep(100);
+			Thread.sleep(properties.getSpeed());
 		}
 
 	}

@@ -19,7 +19,7 @@ public class World implements Serializable {
 	static int teamBCount = 0;
 
 	// how often can life respawn
-	static int respawn = 100000;
+	static int respawn = 0;
 
 	public World() {
 	};
@@ -130,7 +130,6 @@ public class World implements Serializable {
 			retVal = " ";
 		if (world[x][y].isNewStateAlive())
 			retVal = "*";
-
 		return retVal;
 
 	}
@@ -205,49 +204,57 @@ public class World implements Serializable {
 			n[i] = new Cell();
 		}
 
-		try {
-			n[7] = world[x - 1][y - 1];
-		} catch (Exception e) {
-			n[7].setOldStateDead();
-		}
-		try {
-			n[8] = world[x - 1][y];
-		} catch (Exception e) {
-			n[8].setOldStateDead();
-		}
-		try {
-			n[9] = world[x - 1][y + 1];
-		} catch (Exception e) {
-			n[9].setOldStateDead();
-		}
+		boolean IndexIsOK = true;
 
-		try {
+		if (x - 1 < 0)
+			IndexIsOK = false;
+		else if (y - 1 < 0)
+			IndexIsOK = false;
+		else if (x + 1 >= maxX)
+			IndexIsOK = false;
+		else if (y + 1 >= maxY)
+			IndexIsOK = false;
+
+		if (IndexIsOK)
+			n[7] = world[x - 1][y - 1];
+		else
+			n[7].setOldStateDead();
+
+		if (IndexIsOK)
+			n[8] = world[x - 1][y];
+		else
+			n[8].setOldStateDead();
+
+		if (IndexIsOK)
+			n[9] = world[x - 1][y + 1];
+		else
+			n[9].setOldStateDead();
+
+		if (IndexIsOK)
 			n[4] = world[x][y - 1];
-		} catch (Exception e) {
+		else
 			n[4].setOldStateDead();
-		}
-		try {
+
+		if (IndexIsOK)
 			n[6] = world[x][y + 1];
-		} catch (Exception e) {
+		else
 			n[6].setOldStateDead();
-		}
 
 		// bund 3 = x + 1
-		try {
+		if (IndexIsOK)
 			n[1] = world[x + 1][y - 1];
-		} catch (Exception e) {
+		else
 			n[1].setOldStateDead();
-		}
-		try {
+
+		if (IndexIsOK)
 			n[2] = world[x + 1][y];
-		} catch (Exception e) {
+		else
 			n[2].setOldStateDead();
-		}
-		try {
+
+		if (IndexIsOK)
 			n[3] = world[x + 1][y + 1];
-		} catch (Exception e) {
+		else
 			n[3].setOldStateDead();
-		}
 
 		return n;
 
@@ -322,18 +329,20 @@ public class World implements Serializable {
 		// Rule #5 by Rasmus
 		// intet liv - 10 % change for at liv opstår
 
-		int rx = Util.randInt(1, maxX - 1);
-		int ry = Util.randInt(1, maxY - 1);
-		if (neighboursAlive == 0) {
-			if (Util.randInt(0, respawn) == respawn) {
-				world[rx][ry].setCalcState(true);
-				if (Util.randInt(0, 1) == 1)
-					world[rx][ry].setTeam('A');
-				else
-					world[rx][ry].setTeam('B');
+		if (respawn > 0) {
+			int rx = Util.randInt(1, maxX - 1);
+			int ry = Util.randInt(1, maxY - 1);
+			if (neighboursAlive == 0) {
+				if (Util.randInt(0, respawn) == respawn) {
+					world[rx][ry].setCalcState(true);
+					if (Util.randInt(0, 1) == 1)
+						world[rx][ry].setTeam('A');
+					else
+						world[rx][ry].setTeam('B');
+
+				}
 
 			}
-
 		}
 
 	}

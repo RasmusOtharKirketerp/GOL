@@ -11,8 +11,8 @@ public class GetPropertyValues {
 
 	private int x = 0;
 	private int y = 0;
-
 	private int ratio = 0;
+	private int speed = 0;
 
 	public int getX() {
 		return this.x;
@@ -24,6 +24,10 @@ public class GetPropertyValues {
 
 	public int getRatio() {
 		return this.ratio;
+	}
+
+	public int getSpeed() {
+		return this.speed;
 	}
 
 	public String getPropValues() throws IOException {
@@ -42,13 +46,14 @@ public class GetPropertyValues {
 			String Strx = prop.getProperty("x");
 			String Stry = prop.getProperty("y");
 			String StrRatio = prop.getProperty("ratio");
-			System.out.println("x : " + Strx + " y: " + Stry + " ratio: " + StrRatio);
+			String StrSpeed = prop.getProperty("speed");
+			System.out.println("x : " + Strx + " y: " + Stry + " ratio: " + StrRatio + " speed: " + StrSpeed);
 
 			// get the property value and print it out
 			x = Integer.parseInt(Strx);
 			y = Integer.parseInt(Stry);
 			ratio = Integer.parseInt(StrRatio);
-
+			speed = Integer.parseInt(StrSpeed);
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);
 		} finally {
